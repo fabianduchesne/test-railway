@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NoName Factory</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #f5f2ec;
+      --ink: #0a0a0a;
+      --ink-light: #3a3a3a;
+      --ink-muted: #888;
+      --accent: #c8102e;
+      --border: #d0ccc4;
+      --card: #ffffff;
+      --success: #1a7a4a;
+      --error: #c8102e;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background-color: var(--bg);
+      color: var(--ink);
+      font-family: 'Roboto Mono', monospace;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* Subtle grain texture */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.5;
+    }
+
+    /* ── HEADER ── */
+    header {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      padding: 32px 48px 24px;
+      border-bottom: 1px solid var(--border);
+      animation: fadeDown 0.6s ease both;
+    }
+
+    .logo {
+      width: 52px;
+      height: auto;
+      flex-shrink: 0;
+      filter: contrast(1.1);
+    }
+
+    .site-title {
+      font-family: 'Century Gothic', 'CenturyGothic', 'AppleGothic', Futura, 'Trebuchet MS', sans-serif;
+      font-weight: 700;
+      font-size: clamp(1.6rem, 3vw, 2.4rem);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--ink);
+      line-height: 1;
+    }
+
+    .site-tagline {
+      font-size: 0.65rem;
+      color: var(--ink-muted);
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      margin-top: 4px;
+    }
+
+    /* ── MAIN ── */
+    main {
+      position: relative;
+      z-index: 1;
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 72px 48px;
+      animation: fadeUp 0.7s 0.1s ease both;
+    }
+
+    .section-label {
+      font-size: 0.6rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--ink-muted);
+      margin-bottom: 32px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .section-label::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    /* ── DB PANEL ── */
+    .db-panel {
+      border: 1px solid var(--border);
+      background: var(--card);
+      padding: 40px;
+      position: relative;
+    }
+
+    .db-panel::before {
+      content: 'DATABASE';
+      position: absolute;
+      top: -8px;
+      left: 24px;
+      background: var(--card);
+      padding: 0 8px;
+      font-size: 0.55rem;
+      letter-spacing: 0.3em;
+      color: var(--ink-muted);
+    }
+
+    .db-status-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 28px;
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--ink-muted);
+      flex-shrink: 0;
+      transition: background 0.4s;
+    }
+    .status-dot.connected { background: var(--success); box-shadow: 0 0 6px var(--success); }
+    .status-dot.error { background: var(--error); }
+
+    .status-text {
+      font-size: 0.72rem;
+      color: var(--ink-muted);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      transition: color 0.4s;
+    }
+
+    /* ── BUTTON ── */
+    .btn-connect {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--ink);
+      color: #f5f2ec;
+      border: none;
+      padding: 14px 28px;
+      font-family: 'Roboto Mono', monospace;
+      font-size: 0.72rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.15s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn-connect:hover {
+      background: #2a2a2a;
+      transform: translateY(-1px);
+    }
+
+    .btn-connect:active { transform: translateY(0); }
+
+    .btn-connect:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .btn-connect .btn-icon {
+      font-size: 0.9rem;
+      transition: transform 0.4s;
+    }
+    .btn-connect.loading .btn-icon {
+      animation: spin 0.8s linear infinite;
+    }
+
+    /* ── RESULT BOX ── */
+    .result-box {
+      margin-top: 28px;
+      padding: 24px;
+      border-left: 3px solid var(--ink-muted);
+      background: #faf9f6;
+      display: none;
+      animation: fadeUp 0.4s ease both;
+    }
+
+    .result-box.visible { display: block; }
+    .result-box.success { border-color: var(--success); }
+    .result-box.error-state { border-color: var(--error); }
+
+    .result-label {
+      font-size: 0.55rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--ink-muted);
+      margin-bottom: 14px;
+    }
+
+    .result-content {
+      font-size: 0.75rem;
+      line-height: 1.8;
+      color: var(--ink);
+    }
+
+    .result-content .key {
+      color: var(--ink-muted);
+      display: inline-block;
+      min-width: 140px;
+    }
+
+    .result-content .val {
+      color: var(--ink);
+    }
+
+    .result-content .val.ok { color: var(--success); }
+    .result-content .val.err { color: var(--error); }
+
+    /* ── FOOTER ── */
+    footer {
+      position: relative;
+      z-index: 1;
+      padding: 24px 48px;
+      border-top: 1px solid var(--border);
+      font-size: 0.6rem;
+      color: var(--ink-muted);
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      display: flex;
+      justify-content: space-between;
+      animation: fadeUp 0.7s 0.2s ease both;
+    }
+
+    /* ── ANIMATIONS ── */
+    @keyframes fadeDown {
+      from { opacity: 0; transform: translateY(-12px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(12px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <img src="/static/logo.png" alt="NoName Factory Logo" class="logo" />
+    <div>
+      <div class="site-title">NoName Factory</div>
+      <div class="site-tagline">System Interface — v0.1.0</div>
+    </div>
+  </header>
+
+  <main>
+    <div class="section-label">Infrastructure</div>
+
+    <div class="db-panel">
+      <div class="db-status-row">
+        <span class="status-dot" id="statusDot"></span>
+        <span class="status-text" id="statusText">Not connected</span>
+      </div>
+
+      <button class="btn-connect" id="connectBtn" onclick="connectDB()">
+        <span class="btn-icon">⬡</span>
+        Connect DB
+      </button>
+
+      <div class="result-box" id="resultBox">
+        <div class="result-label">Connection Report</div>
+        <div class="result-content" id="resultContent"></div>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <span>NoName Factory</span>
+    <span id="footerTs"></span>
+  </footer>
+
+  <script>
+    // Set footer timestamp
+    document.getElementById('footerTs').textContent = new Date().toISOString().slice(0, 10);
+
+    async function connectDB() {
+      const btn = document.getElementById('connectBtn');
+      const dot = document.getElementById('statusDot');
+      const statusText = document.getElementById('statusText');
+      const resultBox = document.getElementById('resultBox');
+      const resultContent = document.getElementById('resultContent');
+
+      // Loading state
+      btn.disabled = true;
+      btn.classList.add('loading');
+      btn.querySelector('.btn-icon').textContent = '↻';
+      statusText.textContent = 'Connecting...';
+      dot.className = 'status-dot';
+      resultBox.className = 'result-box';
+
+      try {
+        const res = await fetch('/db-hello');
+        const data = await res.json();
+
+        if (data.error) {
+          // Error state
+          dot.className = 'status-dot error';
+          statusText.textContent = 'Connection failed';
+          resultBox.className = 'result-box visible error-state';
+          resultContent.innerHTML = `
+            <div><span class="key">status</span><span class="val err">✗ ERROR</span></div>
+            <div><span class="key">message</span><span class="val err">${escHtml(data.error)}</span></div>
+          `;
+        } else {
+          // Parse the version string for neat display
+          const version = data.postgres_version || '';
+          const pgVersion = version.match(/PostgreSQL ([\d.]+)/)?.[1] || '—';
+          const os = version.match(/on ([^,]+)/)?.[1] || '—';
+          const compiler = version.match(/compiled by ([^,]+)/)?.[1] || '—';
+
+          dot.className = 'status-dot connected';
+          statusText.textContent = 'Connected';
+          resultBox.className = 'result-box visible success';
+          resultContent.innerHTML = `
+            <div><span class="key">status</span><span class="val ok">✓ CONNECTED</span></div>
+            <div><span class="key">engine</span><span class="val">PostgreSQL ${escHtml(pgVersion)}</span></div>
+            <div><span class="key">platform</span><span class="val">${escHtml(os)}</span></div>
+            <div><span class="key">compiler</span><span class="val">${escHtml(compiler)}</span></div>
+            <div><span class="key">timestamp</span><span class="val">${new Date().toISOString()}</span></div>
+          `;
+
+          btn.querySelector('.btn-icon').textContent = '✓';
+          btn.textContent = '';
+          btn.insertAdjacentHTML('afterbegin', '<span class="btn-icon">✓</span> Connected');
+        }
+      } catch (err) {
+        dot.className = 'status-dot error';
+        statusText.textContent = 'Request failed';
+        resultBox.className = 'result-box visible error-state';
+        resultContent.innerHTML = `
+          <div><span class="key">status</span><span class="val err">✗ FETCH ERROR</span></div>
+          <div><span class="key">message</span><span class="val err">${escHtml(err.message)}</span></div>
+        `;
+      } finally {
+        btn.disabled = false;
+        btn.classList.remove('loading');
+        if (!btn.textContent.includes('Connected')) {
+          btn.querySelector('.btn-icon').textContent = '⬡';
+        }
+      }
+    }
+
+    function escHtml(str) {
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;');
+    }
+  </script>
+</body>
+</html>

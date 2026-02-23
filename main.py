@@ -21,11 +21,15 @@ def read_item(item_id: int, q: str | None = None):
 
 @app.get("/db-hello")
 def db_hello():
-    conn = get_connection()
-    cursor = conn.cursor()
-    cursor.execute("SELECT version();")
-    version = cursor.fetchone()
-    cursor.close()
-    conn.close()
-    return {"postgres_version": version[0]}
+    try:
+        conn = get_connection()
+        cursor = conn.cursor()
+        cursor.execute("SELECT version();")
+        version = cursor.fetchone()
+        cursor.close()
+        conn.close()
+        return {"postgres_version": version[0]}
+    except Exception as e:
+        return {"error": str(e)}
+
 

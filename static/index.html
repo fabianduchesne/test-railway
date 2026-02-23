@@ -17,9 +17,7 @@
       --success: #1a7a4a;
       --error: #c8102e;
     }
-
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
     body {
       background-color: var(--bg);
       color: var(--ink);
@@ -27,8 +25,6 @@
       min-height: 100vh;
       overflow-x: hidden;
     }
-
-    /* Subtle grain texture */
     body::before {
       content: '';
       position: fixed;
@@ -38,26 +34,14 @@
       z-index: 0;
       opacity: 0.5;
     }
-
-    /* ── HEADER ── */
     header {
-      position: relative;
-      z-index: 1;
-      display: flex;
-      align-items: center;
-      gap: 20px;
+      position: relative; z-index: 1;
+      display: flex; align-items: center; gap: 20px;
       padding: 32px 48px 24px;
       border-bottom: 1px solid var(--border);
       animation: fadeDown 0.6s ease both;
     }
-
-    .logo {
-      width: 52px;
-      height: auto;
-      flex-shrink: 0;
-      filter: contrast(1.1);
-    }
-
+    .logo { width: 52px; height: auto; flex-shrink: 0; filter: contrast(1.1); }
     .site-title {
       font-family: 'Century Gothic', 'CenturyGothic', 'AppleGothic', Futura, 'Trebuchet MS', sans-serif;
       font-weight: 700;
@@ -67,195 +51,95 @@
       color: var(--ink);
       line-height: 1;
     }
-
-    .site-tagline {
-      font-size: 0.65rem;
-      color: var(--ink-muted);
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      margin-top: 4px;
-    }
-
-    /* ── MAIN ── */
+    .site-tagline { font-size: 0.65rem; color: var(--ink-muted); letter-spacing: 0.2em; text-transform: uppercase; margin-top: 4px; }
     main {
-      position: relative;
-      z-index: 1;
-      max-width: 760px;
-      margin: 0 auto;
+      position: relative; z-index: 1;
+      max-width: 760px; margin: 0 auto;
       padding: 72px 48px;
+      display: flex; flex-direction: column; gap: 64px;
+    }
+    .section-label {
+      font-size: 0.6rem; letter-spacing: 0.3em; text-transform: uppercase;
+      color: var(--ink-muted); margin-bottom: 32px;
+      display: flex; align-items: center; gap: 12px;
+    }
+    .section-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+    .panel {
+      border: 1px solid var(--border); background: var(--card);
+      padding: 40px; position: relative;
       animation: fadeUp 0.7s 0.1s ease both;
     }
-
-    .section-label {
-      font-size: 0.6rem;
-      letter-spacing: 0.3em;
-      text-transform: uppercase;
-      color: var(--ink-muted);
-      margin-bottom: 32px;
-      display: flex;
-      align-items: center;
-      gap: 12px;
+    .panel[data-label]::before {
+      content: attr(data-label);
+      position: absolute; top: -8px; left: 24px;
+      background: var(--card); padding: 0 8px;
+      font-size: 0.55rem; letter-spacing: 0.3em; color: var(--ink-muted);
     }
-    .section-label::after {
-      content: '';
-      flex: 1;
-      height: 1px;
-      background: var(--border);
-    }
-
-    /* ── DB PANEL ── */
-    .db-panel {
-      border: 1px solid var(--border);
-      background: var(--card);
-      padding: 40px;
-      position: relative;
-    }
-
-    .db-panel::before {
-      content: 'DATABASE';
-      position: absolute;
-      top: -8px;
-      left: 24px;
-      background: var(--card);
-      padding: 0 8px;
-      font-size: 0.55rem;
-      letter-spacing: 0.3em;
-      color: var(--ink-muted);
-    }
-
-    .db-status-row {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin-bottom: 28px;
-    }
-
+    .db-status-row { display: flex; align-items: center; gap: 10px; margin-bottom: 28px; }
     .status-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: var(--ink-muted);
-      flex-shrink: 0;
-      transition: background 0.4s;
+      width: 8px; height: 8px; border-radius: 50%;
+      background: var(--ink-muted); flex-shrink: 0; transition: background 0.4s;
     }
     .status-dot.connected { background: var(--success); box-shadow: 0 0 6px var(--success); }
-    .status-dot.error { background: var(--error); }
-
-    .status-text {
-      font-size: 0.72rem;
-      color: var(--ink-muted);
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      transition: color 0.4s;
-    }
-
-    /* ── BUTTON ── */
-    .btn-connect {
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-      background: var(--ink);
-      color: #f5f2ec;
-      border: none;
+    .status-dot.error     { background: var(--error); }
+    .status-text { font-size: 0.72rem; color: var(--ink-muted); letter-spacing: 0.1em; text-transform: uppercase; }
+    .btn {
+      display: inline-flex; align-items: center; gap: 10px;
+      background: var(--ink); color: #f5f2ec; border: none;
       padding: 14px 28px;
-      font-family: 'Roboto Mono', monospace;
-      font-size: 0.72rem;
-      letter-spacing: 0.18em;
-      text-transform: uppercase;
-      cursor: pointer;
-      transition: background 0.2s, transform 0.15s;
-      position: relative;
-      overflow: hidden;
+      font-family: 'Roboto Mono', monospace; font-size: 0.72rem;
+      letter-spacing: 0.18em; text-transform: uppercase;
+      cursor: pointer; transition: background 0.2s, transform 0.15s;
     }
-
-    .btn-connect:hover {
-      background: #2a2a2a;
-      transform: translateY(-1px);
-    }
-
-    .btn-connect:active { transform: translateY(0); }
-
-    .btn-connect:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-      transform: none;
-    }
-
-    .btn-connect .btn-icon {
-      font-size: 0.9rem;
-      transition: transform 0.4s;
-    }
-    .btn-connect.loading .btn-icon {
-      animation: spin 0.8s linear infinite;
-    }
-
-    /* ── RESULT BOX ── */
+    .btn:hover    { background: #2a2a2a; transform: translateY(-1px); }
+    .btn:active   { transform: translateY(0); }
+    .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+    .btn.loading .btn-icon { animation: spin 0.8s linear infinite; }
     .result-box {
-      margin-top: 28px;
-      padding: 24px;
+      margin-top: 28px; padding: 24px;
       border-left: 3px solid var(--ink-muted);
-      background: #faf9f6;
-      display: none;
+      background: #faf9f6; display: none;
       animation: fadeUp 0.4s ease both;
     }
-
-    .result-box.visible { display: block; }
-    .result-box.success { border-color: var(--success); }
+    .result-box.visible     { display: block; }
+    .result-box.success     { border-color: var(--success); }
     .result-box.error-state { border-color: var(--error); }
-
-    .result-label {
-      font-size: 0.55rem;
-      letter-spacing: 0.3em;
-      text-transform: uppercase;
-      color: var(--ink-muted);
-      margin-bottom: 14px;
-    }
-
-    .result-content {
-      font-size: 0.75rem;
-      line-height: 1.8;
-      color: var(--ink);
-    }
-
-    .result-content .key {
-      color: var(--ink-muted);
-      display: inline-block;
-      min-width: 140px;
-    }
-
-    .result-content .val {
-      color: var(--ink);
-    }
-
-    .result-content .val.ok { color: var(--success); }
+    .result-label { font-size: 0.55rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--ink-muted); margin-bottom: 14px; }
+    .result-content { font-size: 0.75rem; line-height: 1.8; color: var(--ink); }
+    .result-content .key { color: var(--ink-muted); display: inline-block; min-width: 140px; }
+    .result-content .val     { color: var(--ink); }
+    .result-content .val.ok  { color: var(--success); }
     .result-content .val.err { color: var(--error); }
-
-    /* ── FOOTER ── */
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px; }
+    .field { display: flex; flex-direction: column; gap: 8px; }
+    .field.full { grid-column: 1 / -1; }
+    .field label { font-size: 0.58rem; letter-spacing: 0.25em; text-transform: uppercase; color: var(--ink-muted); }
+    .field input, .field textarea {
+      font-family: 'Roboto Mono', monospace; font-size: 0.78rem;
+      color: var(--ink); background: #faf9f6;
+      border: 1px solid var(--border); padding: 12px 14px;
+      outline: none; transition: border-color 0.2s, background 0.2s; resize: none;
+    }
+    .field input:focus, .field textarea:focus { border-color: var(--ink); background: #fff; }
+    .field input::placeholder, .field textarea::placeholder { color: #bbb; }
+    .field textarea { min-height: 120px; }
+    .form-footer { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+    .char-count { font-size: 0.6rem; color: var(--ink-muted); letter-spacing: 0.1em; }
     footer {
-      position: relative;
-      z-index: 1;
-      padding: 24px 48px;
-      border-top: 1px solid var(--border);
-      font-size: 0.6rem;
-      color: var(--ink-muted);
-      letter-spacing: 0.15em;
-      text-transform: uppercase;
-      display: flex;
-      justify-content: space-between;
+      position: relative; z-index: 1;
+      padding: 24px 48px; border-top: 1px solid var(--border);
+      font-size: 0.6rem; color: var(--ink-muted);
+      letter-spacing: 0.15em; text-transform: uppercase;
+      display: flex; justify-content: space-between;
       animation: fadeUp 0.7s 0.2s ease both;
     }
-
-    /* ── ANIMATIONS ── */
-    @keyframes fadeDown {
-      from { opacity: 0; transform: translateY(-12px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
-    @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(12px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
-    @keyframes spin {
-      to { transform: rotate(360deg); }
+    @keyframes fadeDown { from { opacity: 0; transform: translateY(-12px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes fadeUp   { from { opacity: 0; transform: translateY(12px);  } to { opacity: 1; transform: translateY(0); } }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    @media (max-width: 560px) {
+      header, main, footer { padding-left: 24px; padding-right: 24px; }
+      .form-grid { grid-template-columns: 1fr; }
+      .panel { padding: 28px; }
     }
   </style>
 </head>
@@ -270,24 +154,56 @@
   </header>
 
   <main>
-    <div class="section-label">Infrastructure</div>
 
-    <div class="db-panel">
-      <div class="db-status-row">
-        <span class="status-dot" id="statusDot"></span>
-        <span class="status-text" id="statusText">Not connected</span>
+    <section>
+      <div class="section-label">Infrastructure</div>
+      <div class="panel" data-label="DATABASE">
+        <div class="db-status-row">
+          <span class="status-dot" id="statusDot"></span>
+          <span class="status-text" id="statusText">Not connected</span>
+        </div>
+        <button class="btn" id="connectBtn" onclick="connectDB()">
+          <span class="btn-icon">⬡</span>
+          Connect DB
+        </button>
+        <div class="result-box" id="dbResultBox">
+          <div class="result-label">Connection Report</div>
+          <div class="result-content" id="dbResultContent"></div>
+        </div>
       </div>
+    </section>
 
-      <button class="btn-connect" id="connectBtn" onclick="connectDB()">
-        <span class="btn-icon">⬡</span>
-        Connect DB
-      </button>
-
-      <div class="result-box" id="resultBox">
-        <div class="result-label">Connection Report</div>
-        <div class="result-content" id="resultContent"></div>
+    <section>
+      <div class="section-label">Contact</div>
+      <div class="panel" data-label="TRANSMISSION">
+        <div class="form-grid">
+          <div class="field">
+            <label for="contactName">Name</label>
+            <input type="text" id="contactName" placeholder="Your name" autocomplete="name" />
+          </div>
+          <div class="field">
+            <label for="contactEmail">Email</label>
+            <input type="email" id="contactEmail" placeholder="your@email.com" autocomplete="email" />
+          </div>
+          <div class="field full">
+            <label for="contactComment">Message</label>
+            <textarea id="contactComment" placeholder="Write your message here..." maxlength="1000" oninput="updateCharCount()"></textarea>
+          </div>
+        </div>
+        <div class="form-footer">
+          <span class="char-count" id="charCount">0 / 1000</span>
+          <button class="btn" id="submitBtn" onclick="submitForm()">
+            <span class="btn-icon">→</span>
+            Send Transmission
+          </button>
+        </div>
+        <div class="result-box" id="formResultBox">
+          <div class="result-label">Transmission Report</div>
+          <div class="result-content" id="formResultContent"></div>
+        </div>
       </div>
-    </div>
+    </section>
+
   </main>
 
   <footer>
@@ -296,81 +212,114 @@
   </footer>
 
   <script>
-    // Set footer timestamp
     document.getElementById('footerTs').textContent = new Date().toISOString().slice(0, 10);
-
+    function updateCharCount() {
+      const len = document.getElementById('contactComment').value.length;
+      document.getElementById('charCount').textContent = len + ' / 1000';
+    }
     async function connectDB() {
       const btn = document.getElementById('connectBtn');
       const dot = document.getElementById('statusDot');
       const statusText = document.getElementById('statusText');
-      const resultBox = document.getElementById('resultBox');
-      const resultContent = document.getElementById('resultContent');
-
-      // Loading state
-      btn.disabled = true;
-      btn.classList.add('loading');
-      btn.querySelector('.btn-icon').textContent = '↻';
+      const resultBox = document.getElementById('dbResultBox');
+      const resultContent = document.getElementById('dbResultContent');
+      setLoading(btn, true, '⬡');
       statusText.textContent = 'Connecting...';
       dot.className = 'status-dot';
       resultBox.className = 'result-box';
-
       try {
-        const res = await fetch('/db-hello');
-        const data = await res.json();
-
+        const data = await fetchJSON('/db-hello');
         if (data.error) {
-          // Error state
           dot.className = 'status-dot error';
           statusText.textContent = 'Connection failed';
-          resultBox.className = 'result-box visible error-state';
-          resultContent.innerHTML = `
-            <div><span class="key">status</span><span class="val err">✗ ERROR</span></div>
-            <div><span class="key">message</span><span class="val err">${escHtml(data.error)}</span></div>
-          `;
+          showResult(resultBox, resultContent, 'error', [['status','✗ ERROR','err'],['message',data.error,'err']]);
         } else {
-          // Parse the version string for neat display
-          const version = data.postgres_version || '';
+          const version   = data.postgres_version || '';
           const pgVersion = version.match(/PostgreSQL ([\d.]+)/)?.[1] || '—';
-          const os = version.match(/on ([^,]+)/)?.[1] || '—';
-          const compiler = version.match(/compiled by ([^,]+)/)?.[1] || '—';
-
+          const os        = version.match(/on ([^,]+)/)?.[1] || '—';
+          const compiler  = version.match(/compiled by ([^,]+)/)?.[1] || '—';
           dot.className = 'status-dot connected';
           statusText.textContent = 'Connected';
-          resultBox.className = 'result-box visible success';
-          resultContent.innerHTML = `
-            <div><span class="key">status</span><span class="val ok">✓ CONNECTED</span></div>
-            <div><span class="key">engine</span><span class="val">PostgreSQL ${escHtml(pgVersion)}</span></div>
-            <div><span class="key">platform</span><span class="val">${escHtml(os)}</span></div>
-            <div><span class="key">compiler</span><span class="val">${escHtml(compiler)}</span></div>
-            <div><span class="key">timestamp</span><span class="val">${new Date().toISOString()}</span></div>
-          `;
-
-          btn.querySelector('.btn-icon').textContent = '✓';
-          btn.textContent = '';
-          btn.insertAdjacentHTML('afterbegin', '<span class="btn-icon">✓</span> Connected');
+          showResult(resultBox, resultContent, 'success', [
+            ['status','✓ CONNECTED','ok'],
+            ['engine','PostgreSQL ' + pgVersion],
+            ['platform', os],
+            ['compiler', compiler],
+            ['timestamp', new Date().toISOString()],
+          ]);
+          btn.innerHTML = '<span class="btn-icon">✓</span> Connected';
+          btn.disabled = true;
+          return;
         }
       } catch (err) {
         dot.className = 'status-dot error';
         statusText.textContent = 'Request failed';
-        resultBox.className = 'result-box visible error-state';
-        resultContent.innerHTML = `
-          <div><span class="key">status</span><span class="val err">✗ FETCH ERROR</span></div>
-          <div><span class="key">message</span><span class="val err">${escHtml(err.message)}</span></div>
-        `;
+        showResult(resultBox, resultContent, 'error', [['status','✗ FETCH ERROR','err'],['message',err.message,'err']]);
       } finally {
-        btn.disabled = false;
-        btn.classList.remove('loading');
-        if (!btn.textContent.includes('Connected')) {
-          btn.querySelector('.btn-icon').textContent = '⬡';
-        }
+        setLoading(btn, false, '⬡');
       }
     }
-
+    async function submitForm() {
+      const name    = document.getElementById('contactName').value.trim();
+      const email   = document.getElementById('contactEmail').value.trim();
+      const comment = document.getElementById('contactComment').value.trim();
+      const btn     = document.getElementById('submitBtn');
+      const resultBox     = document.getElementById('formResultBox');
+      const resultContent = document.getElementById('formResultContent');
+      if (!name || !email || !comment) {
+        showResult(resultBox, resultContent, 'error', [['status','✗ VALIDATION ERROR','err'],['message','All fields are required.','err']]);
+        return;
+      }
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        showResult(resultBox, resultContent, 'error', [['status','✗ VALIDATION ERROR','err'],['message','Invalid email address.','err']]);
+        return;
+      }
+      setLoading(btn, true, '→');
+      resultBox.className = 'result-box';
+      try {
+        const data = await fetchJSON('/contact', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name, email, comment }),
+        });
+        if (data.error) {
+          showResult(resultBox, resultContent, 'error', [['status','✗ ERROR','err'],['message',data.error,'err']]);
+        } else {
+          showResult(resultBox, resultContent, 'success', [
+            ['status',    '✓ TRANSMITTED', 'ok'],
+            ['email to',  data.email_sent_to],
+            ['saved id',  '#' + data.submission_id],
+            ['timestamp', data.timestamp],
+          ]);
+          document.getElementById('contactName').value    = '';
+          document.getElementById('contactEmail').value   = '';
+          document.getElementById('contactComment').value = '';
+          updateCharCount();
+        }
+      } catch (err) {
+        showResult(resultBox, resultContent, 'error', [['status','✗ FETCH ERROR','err'],['message',err.message,'err']]);
+      } finally {
+        setLoading(btn, false, '→');
+      }
+    }
+    async function fetchJSON(url, opts) {
+      const res = await fetch(url, opts);
+      return res.json();
+    }
+    function setLoading(btn, loading, idleIcon) {
+      if (!btn.disabled || !loading) btn.disabled = loading;
+      btn.classList.toggle('loading', loading);
+      const icon = btn.querySelector('.btn-icon');
+      if (icon) icon.textContent = loading ? '↻' : idleIcon;
+    }
+    function showResult(box, content, type, rows) {
+      box.className = 'result-box visible ' + (type === 'error' ? 'error-state' : 'success');
+      content.innerHTML = rows.map(function(r) {
+        return '<div><span class="key">' + escHtml(r[0]) + '</span><span class="val' + (r[2] ? ' ' + r[2] : '') + '">' + escHtml(String(r[1])) + '</span></div>';
+      }).join('');
+    }
     function escHtml(str) {
-      return String(str)
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;');
+      return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
     }
   </script>
 </body>

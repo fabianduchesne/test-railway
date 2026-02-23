@@ -32,4 +32,7 @@ def db_hello():
     except Exception as e:
         return {"error": str(e)}
 
+@app.get("/debug-env")
+def debug_env():
+    return dict(os.environ)
 

@@ -1,17 +1,24 @@
+from dotenv import load_dotenv
+load_dotenv()
+
 from fastapi import FastAPI
-from fastapi.staticfiles import StaticFiles
-from fastapi.responses import HTMLResponse
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, EmailStr
 import psycopg2
 import resend
 import os
-from datetime import datetime, timezone
 
 app = FastAPI()
-app.mount("/static", StaticFiles(directory="static"), name="static")
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=os.environ.get("ALLOWED_ORIGINS", "http://localhost:4200").split(","),
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 resend.api_key = os.environ["RESEND_API_KEY"]
-RECIPIENT_EMAIL = os.environ["CONTACT_RECIPIENT_EMAIL"]  # where submissions are sent to
+RECIPIENT_EMAIL = os.environ["CONTACT_RECIPIENT_EMAIL"]
 
 
 def get_connection():
@@ -23,10 +30,10 @@ def ensure_table():
     cur = conn.cursor()
     cur.execute("""
         CREATE TABLE IF NOT EXISTS contact_submissions (
-            id        SERIAL PRIMARY KEY,
-            name      TEXT NOT NULL,
-            email     TEXT NOT NULL,
-            comment   TEXT NOT NULL,
+            id         SERIAL PRIMARY KEY,
+            name       TEXT NOT NULL,
+            email      TEXT NOT NULL,
+            comment    TEXT NOT NULL,
             created_at TIMESTAMPTZ DEFAULT NOW()
         );
     """)
@@ -38,12 +45,6 @@ def ensure_table():
 @app.on_event("startup")
 def startup():
     ensure_table()
-
-
-@app.get("/", response_class=HTMLResponse)
-def index():
-    with open("static/index.html", "r") as f:
-        return f.read()
 
 
 @app.get("/db-hello")
@@ -69,7 +70,6 @@ class ContactForm(BaseModel):
 @app.post("/contact")
 def contact(form: ContactForm):
     try:
-        # 1. Save to DB
         conn = get_connection()
         cur = conn.cursor()
         cur.execute(
@@ -83,9 +83,8 @@ def contact(form: ContactForm):
         cur.close()
         conn.close()
 
-        # 2. Send email via Resend
         resend.Emails.send({
-            "from": "NoName Factory <onboarding@resend.dev>",  # replace with your verified domain later
+            "from": "NoName Factory <onboarding@resend.dev>",
             "to": [RECIPIENT_EMAIL],
             "subject": f"New contact from {form.name}",
             "html": f"""
@@ -108,8 +107,3 @@ def contact(form: ContactForm):
 
     except Exception as e:
         return {"error": str(e)}
-
-
-@app.get("/items/{item_id}")
-def read_item(item_id: int, q: str | None = None):
-    return {"item_id": item_id, "q": q}
